@@ -17,12 +17,10 @@ const Login = () => {
 		login(values)
 			.unwrap()
 			.then(async (res) => {
-				console.log(res);
 				toast.success(res.message);
 				navigate("/user");
 			})
 			.catch((err) => {
-				console.log(err);
 				toast.error(err.data.message);
 			});
 	};
@@ -105,7 +103,7 @@ const Login = () => {
 						>
 							Or
 						</span>
-						<a href=''>Register Now!</a>
+						<a href='/register'>Register Now!</a>
 					</div>
 				</Form.Item>
 			</Form>

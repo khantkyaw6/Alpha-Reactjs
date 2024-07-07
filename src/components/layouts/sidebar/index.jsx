@@ -39,7 +39,12 @@ const AppSidebar = ({ setCollapsed, collapsed }) => {
 	};
 
 	return (
-		<Sider trigger={null} collapsible collapsed={collapsed}>
+		<Sider
+			trigger={null}
+			collapsible
+			collapsed={collapsed}
+			style={{ height: "100vh" }}
+		>
 			<Menu
 				theme='dark'
 				mode='inline'

@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUserIndexQuery } from "../../features/user/api/userApi";
-import { Space, Table, Tag } from "antd";
+import { Button, Space, Table, Drawer } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMars, faVenus } from "@fortawesome/free-solid-svg-icons";
+import { styles } from "./style";
+import UserDrawer from "./components/UserDrawer";
 
 const User = () => {
 	const { data, isLoading } = useUserIndexQuery();
+	const [open, setOpen] = useState(false);
 	const dataSource = data?.data?.map((user) => ({
 		...user,
 		key: user.id,
 	}));
+
+	const showDrawer = () => {
+		setOpen(true);
+	};
+
+	const onClose = () => {
+		setOpen(false);
+	};
 
 	const columns = [
 		{
@@ -44,53 +55,27 @@ const User = () => {
 				style: { textAlign: "center" },
 			}),
 		},
-
-		// {
-		// 	title: "Tags",
-		// 	key: "tags",
-		// 	dataIndex: "tags",
-		// 	render: (_, { tags }) => (
-		// 		<>
-		// 			{tags.map((tag) => {
-		// 				let color = tag.length > 5 ? "geekblue" : "green";
-		// 				if (tag === "loser") {
-		// 					color = "volcano";
-		// 				}
-		// 				return (
-		// 					<Tag color={color} key={tag}>
-		// 						{tag.toUpperCase()}
-		// 					</Tag>
-		// 				);
-		// 			})}
-		// 		</>
-		// 	),
-		// },
-		// {
-		// 	title: "Action",
-		// 	key: "action",
-		// 	render: (_, record) => (
-		// 		<Space size='middle'>
-		// 			<a>Invite {record.name}</a>
-		// 			<a>Delete</a>
-		// 		</Space>
-		// 	),
-		// },
+		{
+			title: "Action",
+			key: "action",
+			render: (_, record) => (
+				<Space size='middle'>
+					<a>Invite {record.name}</a>
+					<a>Delete</a>
+				</Space>
+			),
+		},
 	];
-
-	const headerStyle = {
-		backgroundColor: "#001529",
-		color: "white",
-		padding: "10px 20px",
-		borderRadius: "4px",
-		textAlign: "center",
-		marginBottom: "20px",
-		width: "100%",
-	};
 
 	return (
 		<div>
 			<div style={{ backgroundColor: "#f0f2f5", padding: "20px" }}>
-				<h2 style={headerStyle}>User List</h2>
+				<div style={styles.headerStyle}>
+					<h2 style={{ margin: 0 }}>User List</h2>
+					<Button type='primary' onClick={showDrawer}>
+						Create
+					</Button>
+				</div>
 				<Table
 					bordered
 					columns={columns}
@@ -102,6 +87,7 @@ const User = () => {
 					}}
 				/>
 			</div>
+			<UserDrawer onClose={onClose} open={open} />
 		</div>
 	);
 };

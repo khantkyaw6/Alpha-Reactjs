@@ -30,6 +30,6 @@ export const loginLayoutStyle = {
 	signupLink: {
 		display: "flex",
 		justifyContent: "center",
-		margin: "10px 0",
+		marginTop: "10px",
 	},
 };
