@@ -7,28 +7,75 @@ import {
 	WomanOutlined,
 } from "@ant-design/icons";
 import { Button, Form, Input, Select } from "antd";
-import React from "react";
-import { useUserStoreMutation } from "../../../features/user/api/userApi";
+import React, { useEffect, useState } from "react";
+import {
+	useUserStoreMutation,
+	useUserUpdateMutation,
+} from "../../../features/user/api/userApi";
+import { toast } from "sonner";
 
-const UserForm = ({ onClose }) => {
+const UserForm = ({ onClose, update }) => {
 	const [form] = Form.useForm();
-	const [userStore, { isLoading }] = useUserStoreMutation();
-	const onFinish = async (values) => {
-		console.log(values);
+	const [userStore, { isLoading: isCreateLoading }] = useUserStoreMutation();
+	const [userUpdate, { isLoading: isUpdateLoading }] =
+		useUserUpdateMutation();
 
-		userStore(values)
-			.unwrap()
-			.then(async (res) => {
-				console.log(res);
-			})
-			.catch((err) => {
-				console.log(err);
+	useEffect(() => {
+		if (update) {
+			form.setFieldsValue({
+				name: update.name,
+				email: update.email,
+				phone: update.phone,
+				gender: update.gender,
 			});
+		} else {
+			form.resetFields();
+		}
+	}, [update, form]);
+
+	const onFinish = async (values) => {
+		if (update) {
+			userUpdate({ data: values, id: update.id })
+				.unwrap()
+				.then(async (res) => {
+					if (isSuccess) {
+						toast.success(res.message);
+					}
+				})
+				.catch((err) => {
+					toast.error(err.data.message);
+				});
+		} else {
+			userStore(values)
+				.unwrap()
+				.then(async (res) => {
+					console.log(res);
+					if (res.isSuccess) {
+						toast.success(res.message);
+					}
+				})
+				.catch((err) => {
+					console.log(err);
+					toast.error(err.data.message);
+				});
+		}
 
 		onClose();
 	};
+
+	const phoneValidator = (_, value) => {
+		const regex = /^[0-9]+$/;
+		if (!value || regex.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject(
+			"Please enter a valid phone number (numbers only)."
+		);
+	};
+
 	return (
 		<Form
+			form={form}
 			name='normal_register'
 			className='register-form'
 			initialValues={{
@@ -71,6 +118,9 @@ const UserForm = ({ onClose }) => {
 						required: true,
 						message: "Please enter user Phone number!",
 					},
+					{
+						validator: phoneValidator,
+					},
 				]}
 			>
 				<Input
@@ -103,9 +153,10 @@ const UserForm = ({ onClose }) => {
 					type='primary'
 					htmlType='submit'
 					className='register-form-button'
-					// disabled={isLoading}
+					loading={update ? isUpdateLoading : isCreateLoading}
+					disabled={isUpdateLoading || isCreateLoading}
 				>
-					Create
+					{update ? "Update" : "Create"}
 				</Button>
 			</Form.Item>
 		</Form>

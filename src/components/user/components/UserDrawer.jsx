@@ -2,7 +2,7 @@ import { Drawer } from "antd";
 import React from "react";
 import UserForm from "./UserForm";
 
-const UserDrawer = ({ onClose, open }) => {
+const UserDrawer = ({ onClose, open, update }) => {
 	return (
 		<Drawer
 			destroyOnClose={true}
@@ -10,7 +10,7 @@ const UserDrawer = ({ onClose, open }) => {
 			onClose={onClose}
 			open={open}
 		>
-			<UserForm onClose={onClose} />
+			<UserForm onClose={onClose} update={update} />
 		</Drawer>
 	);
 };

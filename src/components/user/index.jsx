@@ -1,14 +1,21 @@
 import React, { useState } from "react";
-import { useUserIndexQuery } from "../../features/user/api/userApi";
-import { Button, Space, Table, Drawer } from "antd";
+import {
+	useUserDeleteMutation,
+	useUserIndexQuery,
+} from "../../features/user/api/userApi";
+import { Button, Space, Table, Drawer, Popconfirm } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMars, faVenus } from "@fortawesome/free-solid-svg-icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { styles } from "./style";
 import UserDrawer from "./components/UserDrawer";
+import { toast } from "sonner";
 
 const User = () => {
+	const [userDelete] = useUserDeleteMutation();
 	const { data, isLoading } = useUserIndexQuery();
 	const [open, setOpen] = useState(false);
+	const [update, setUpdate] = useState(null);
 	const dataSource = data?.data?.map((user) => ({
 		...user,
 		key: user.id,
@@ -20,6 +27,26 @@ const User = () => {
 
 	const onClose = () => {
 		setOpen(false);
+		setUpdate(null); // Reset update state
+	};
+
+	const editHandler = (data) => {
+		setUpdate(data);
+		showDrawer();
+	};
+
+	const deleteHandler = async (id) => {
+		console.log("In here", id);
+		try {
+			const result = await userDelete(id);
+			console.log(result);
+			if (result.data.isSuccess) {
+				toast.success(result.data.message);
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error(error.data.message);
+		}
 	};
 
 	const columns = [
@@ -60,8 +87,19 @@ const User = () => {
 			key: "action",
 			render: (_, record) => (
 				<Space size='middle'>
-					<a>Invite {record.name}</a>
-					<a>Delete</a>
+					<Button
+						type='link'
+						icon={<EditOutlined />}
+						onClick={() => editHandler(record)}
+					/>
+					<Popconfirm
+						title='Are you sure to delete this user?'
+						onConfirm={() => deleteHandler(record.id)}
+						okText='Yes'
+						cancelText='No'
+					>
+						<Button type='link' icon={<DeleteOutlined />} />
+					</Popconfirm>
 				</Space>
 			),
 		},
@@ -87,7 +125,7 @@ const User = () => {
 					}}
 				/>
 			</div>
-			<UserDrawer onClose={onClose} open={open} />
+			<UserDrawer onClose={onClose} open={open} update={update} />
 		</div>
 	);
 };

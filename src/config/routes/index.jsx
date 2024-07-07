@@ -8,6 +8,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import ErrorPage404 from "../../components/error-pages/404";
 import LoadingFallback from "../../components/common/loading-fallback";
 import User from "../../components/user";
+import Video from "../../components/video";
 
 const Router = () => {
 	const config = createBrowserRouter([
@@ -44,6 +45,10 @@ const Router = () => {
 				{
 					path: "/user",
 					element: <User />,
+				},
+				{
+					path: "/video",
+					element: <Video />,
 				},
 			],
 		},

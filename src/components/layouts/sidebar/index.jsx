@@ -43,8 +43,9 @@ const AppSidebar = ({ setCollapsed, collapsed }) => {
 			trigger={null}
 			collapsible
 			collapsed={collapsed}
-			style={{ height: "100vh" }}
+			style={{ minHeight: "100vh" }}
 		>
+			<h3 style={{ color: "#fff", marginLeft: "30px" }}>Alpha</h3>
 			<Menu
 				theme='dark'
 				mode='inline'

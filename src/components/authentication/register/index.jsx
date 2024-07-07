@@ -34,6 +34,16 @@ const Register = () => {
 			});
 	};
 
+	const phoneValidator = (_, value) => {
+		const regex = /^[0-9]+$/;
+		if (!value || regex.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject(
+			"Please enter a valid phone number (numbers only)."
+		);
+	};
+
 	return (
 		<div style={loginLayoutStyle.form}>
 			<Form
@@ -88,6 +98,9 @@ const Register = () => {
 						{
 							required: true,
 							message: "Please enter your Phone number!",
+						},
+						{
+							validator: phoneValidator,
 						},
 					]}
 				>
